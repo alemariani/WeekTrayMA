@@ -1,0 +1,6 @@
+build
+dist
+test
+src/__pycache__
+launch.json
+*.spec

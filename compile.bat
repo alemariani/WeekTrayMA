@@ -1,0 +1,1 @@
+pyinstaller src\main.py -F -w -n "WeekCalendar"
