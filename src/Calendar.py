@@ -18,8 +18,7 @@ class Calendar(ctk.CTkFrame):
         for i in range(8):
             self.columnconfigure(i, weight = 1)
         self.rowconfigure(0, weight = 1)
-        self.rowconfigure(1, weight = 1)
-        self.rowconfigure(2, weight = 6)
+        self.rowconfigure(1, weight = 7)
 
         # Create a frame for the header
         header_frame = ctk.CTkFrame(self, fg_color='transparent')
@@ -35,16 +34,10 @@ class Calendar(ctk.CTkFrame):
         
         prev_button = ctk.CTkButton(header_frame, text="<<", width=30, command=self.prev_month, fg_color='transparent')
         prev_button.pack(side="right", padx=4)
-
-        # Display the week headers
-        headers = ["Wee", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        for col, header in enumerate(headers):
-            header_label = ctk.CTkLabel(self, text=header, font=("Arial", 12), fg_color='transparent', text_color=FOREGROUND_COLOR2)
-            header_label.grid(row=1, column=col, padx=5, pady=5, sticky='we')
         
         # Create a container frame to hold the month ui data diplayed
         month_container = ctk.CTkFrame(self, fg_color='transparent')
-        month_container.grid(row=2, column=0, columnspan=8, sticky='EW')
+        month_container.grid(row=1, column=0, columnspan=8, sticky='EW')
         self.month_container = month_container
         # initial empty frame
         month_frame = ctk.CTkFrame(month_container)
@@ -61,6 +54,12 @@ class Calendar(ctk.CTkFrame):
         month_frame = ctk.CTkFrame(parent, fg_color='transparent')
         for i in range(8):
             month_frame.columnconfigure(i, weight = 1)
+        
+        # Display the week headers
+        headers = ["Wee", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        for col, header in enumerate(headers):
+            header_label = ctk.CTkLabel(month_frame, text=header, font=("Arial", 12), fg_color='transparent', text_color=FOREGROUND_COLOR2)
+            header_label.grid(row=1, column=col, padx=5, pady=0, sticky='we')
 
         # Display the days and week numbers
         today = datetime.now()
