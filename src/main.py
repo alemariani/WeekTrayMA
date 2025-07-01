@@ -44,7 +44,9 @@ def main():
     icon = pystray.Icon('Week Number')
     icon.title = 'Week Number'
     update_icon(icon, None)
-    icon.calendarThread = threading.Thread(target=window_thread, args=(icon, )).start()
+    icon.calendarThread = threading.Thread(target=window_thread, args=(icon, ))
+    icon.calendarThread.daemon = True
+    icon.calendarThread.start()
     icon.menu = pystray.Menu(   \
         item('Open Calendar', on_left_click, default=True, visible=False),  \
         item('Refresh', update_icon), \
