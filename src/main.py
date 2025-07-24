@@ -1,12 +1,9 @@
 import threading
 from PIL import Image, ImageDraw, ImageFont
 import pystray
-from pystray import MenuItem as item
-import datetime
-import CalendarApp
 
-def get_current_week():
-    return datetime.date.today().isocalendar()[1]
+import CalendarApp
+import utils
 
 def create_image2(text, background_color, font_color):
     width, height = 64, 64
@@ -35,27 +32,28 @@ def window_thread(icon):
     icon.app = CalendarApp.CalendarApp()
     icon.app.mainloop()
 
-def update_icon(icon, item):
-    week = get_current_week()
-    digits_text = f'{week}'
+def update_icon(icon):
+    digits_text = f'{icon.week}'
     icon.icon = create_image(digits_text)
 
-def main():
+def init_trayicon():
     icon = pystray.Icon('Week Number')
     icon.title = 'Week Number'
-    update_icon(icon, None)
-    icon.calendarThread = threading.Thread(target=window_thread, args=(icon, ))
-    icon.calendarThread.daemon = True
-    icon.calendarThread.start()
+    icon.week = utils.get_current_week()
+    icon.update = update_icon
+    icon.update(icon)
     icon.menu = pystray.Menu(   \
-        item('Open Calendar', on_left_click, default=True, visible=False),  \
-        item('Refresh', update_icon), \
-        item('Quit', on_exit))
+        pystray.MenuItem('Open Calendar', on_left_click, default=True, visible=False),  \
+        pystray.MenuItem('Quit', on_exit))
+    
+    return icon
 
-    threading.Thread(target=run_icon, args=(icon,)).start()
+def main():
+    trayicon = init_trayicon()
 
-def run_icon(icon):
-    icon.run()
+    threading.Thread(target=window_thread, args=(trayicon, ), daemon=True).start()
+    trayicon.run_detached()
+    threading.Thread(target=utils.week_monitoring_thread, args=(trayicon,), daemon=True).start()
 
 if __name__ == "__main__":
     main()
