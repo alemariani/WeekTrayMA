@@ -6,5 +6,9 @@
 
 * **System Tray Integration:** See the current week number conveniently displayed in your system tray.
 * **Integrated Calendar:** Access a full calendar view that clearly shows week numbers for every month.
+* **Automatic Theme Adaptation:** Automatically detects Windows theme to adapt the font color.
 
-Developed with **Windows 11** in mind. It may function on other OSes, but no tests are done.
+Developed for **Windows 11**
+
+![App Screenshot](assets/Screenshot-2025-07-24.png).
+
