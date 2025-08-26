@@ -58,7 +58,7 @@ def icon_updating_thread(icon):
         
         theme = utils.get_windows_system_theme()
         if theme != icon.theme:
-            print (f"Windwos theme changed! {theme} theme set.")
+            print (f"Windows theme changed! {theme} theme set.")
             icon.theme = theme            
             update_needed = True
 
