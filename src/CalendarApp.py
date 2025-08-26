@@ -8,13 +8,8 @@ class CalendarApp(ctk.CTk):
         self.overrideredirect(True)
         self.attributes('-topmost', True)
         self.focusOutForOverrideredirect = False
-        
-        work_area = self.get_monitor_work_area_size()
-        lenght = 300
-        height = 200
-        x = (work_area[2] - (lenght * self._get_window_scaling()) - 2)
-        y = (work_area[3] - (height * self._get_window_scaling()) - 2)
-        self.geometry('%dx%d+%d+%d'%(lenght, height, x, y))
+
+        self.init_geometry()
 
         self.rowconfigure(0, weight = 1)
         self.columnconfigure(0, weight = 1)
@@ -23,6 +18,15 @@ class CalendarApp(ctk.CTk):
         
         self.bind("<FocusOut>", self.on_focus_out)
         self.withdraw()
+
+    def init_geometry(self):
+        work_area = self.get_monitor_work_area_size()
+        lenght = 300
+        height = 200
+        x = (work_area[2] - (lenght * self._get_window_scaling()) - 2)
+        y = (work_area[3] - (height * self._get_window_scaling()) - 2)
+        self.geometry('%dx%d+%d+%d'%(lenght, height, x, y))
+
         
     def on_focus_out(self, event):
         if self.focusOutForOverrideredirect:
@@ -42,7 +46,9 @@ class CalendarApp(ctk.CTk):
 
     def _show(self):
         self.calendar_frame.reset_month()
-        #self.update_idletasks()
+        # need to re-init the window position and size each time in case display settings are changed
+        # e.g. external displays are connected/disconnected
+        self.init_geometry()
         self.deiconify()
         self.focus_force()
 
