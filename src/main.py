@@ -35,8 +35,8 @@ def update_icon(icon):
     icon.icon = create_image(digits_text, (0, 0, 0, 0), font_color)
 
 def init_trayicon():
-    icon = pystray.Icon('Week Number')
-    icon.title = 'Week Number'
+    icon = pystray.Icon('WeekTrayAM')
+    icon.title = 'WeekTrayAM'
     icon.week = utils.get_current_week()
     icon. theme = utils.get_windows_system_theme()
     icon.update = update_icon

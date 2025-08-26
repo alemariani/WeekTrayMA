@@ -1,1 +1,1 @@
-pyinstaller src\main.py -F -w -n "WeekCalendar"
+pyinstaller src\main.py -F -w -n "WeekTrayMA"
