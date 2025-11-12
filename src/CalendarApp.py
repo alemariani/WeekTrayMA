@@ -9,23 +9,21 @@ class CalendarApp(ctk.CTk):
         self.attributes('-topmost', True)
         self.focusOutForOverrideredirect = False
 
+        self.width = 300
+        self.height = 200
         self.init_geometry()
-
-        self.rowconfigure(0, weight = 1)
-        self.columnconfigure(0, weight = 1)
+        
         self.calendar_frame = Calendar.Calendar(self)
-        self.calendar_frame.grid(row=0, column=0, sticky='NSWE')
+        self.calendar_frame.pack(fill=ctk.BOTH, expand=True)
         
         self.bind("<FocusOut>", self.on_focus_out)
         self.withdraw()
 
     def init_geometry(self):
         work_area = self.get_monitor_work_area_size()
-        lenght = 300
-        height = 200
-        x = (work_area[2] - (lenght * self._get_window_scaling()) - 2)
-        y = (work_area[3] - (height * self._get_window_scaling()) - 2)
-        self.geometry('%dx%d+%d+%d'%(lenght, height, x, y))
+        x = (work_area[2] - (self.width * self._get_window_scaling()) - 2)
+        y = (work_area[3] - (self.height * self._get_window_scaling()) - 2)
+        self.geometry('%dx%d+%d+%d'%(self.width, self.height, x, y))
 
         
     def on_focus_out(self, event):
