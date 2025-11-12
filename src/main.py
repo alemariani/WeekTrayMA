@@ -40,7 +40,6 @@ def init_trayicon():
     icon.week = utils.get_current_week()
     icon.theme = utils.get_windows_system_theme()
     icon.update = update_icon
-    icon.update(icon)
     icon.menu = pystray.Menu(   \
         pystray.MenuItem('Open Calendar', on_left_click, default=True, visible=False),  \
         pystray.MenuItem('Quit', on_exit))
@@ -48,28 +47,19 @@ def init_trayicon():
     return icon
 
 def icon_updating_thread(icon):
-    update_needed = False
-
     while True:
-        week = utils.get_current_week()
-        if week != icon.week:
-            icon.week = week
-            update_needed = True
-        
+        current_week = utils.get_current_week()
         theme = utils.get_windows_system_theme()
-        if theme != icon.theme:
-            print (f"Windows theme changed! {theme} theme set.")
-            icon.theme = theme            
-            update_needed = True
-
-        if update_needed:
+        if current_week != icon.week or theme != icon.theme:
+            icon.week = current_week
+            icon.theme = theme
             icon.update(icon)
-            update_needed = False
 
         time.sleep(60)  # run every 60 seconds
 
 def main():
     trayicon = init_trayicon()
+    trayicon.update(trayicon) # Initial icon update
 
     threading.Thread(target=window_thread, args=(trayicon, ), daemon=True).start()
     trayicon.run_detached()
