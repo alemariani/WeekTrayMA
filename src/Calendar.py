@@ -2,42 +2,51 @@ import customtkinter as ctk
 import calendar
 from datetime import datetime
 
-BACKGROUND_COLOR = '#232234'
-SELECTED_BACKGROUND_COLOR = '#00fefe'
-FOREGROUND_COLOR1 = 'white'
-FOREGROUND_COLOR2 = '#686868'
-
 class Calendar(ctk.CTkFrame):
-    def __init__(self, master=None):
-        super().__init__(master, fg_color=BACKGROUND_COLOR)
+    _default_theme = {
+        'font_family': 'Arial',
+        'color_bg': ('#f9ecec', '#232234'),
+        'color_bg2': ('#edc5c5', '#3e3c5d'),
+        'color_accent': ('#E85F5C', '#00fefe'),
+        'color_text': ('#020222', '#EEEEFF'),
+        'color_text_muted': ('#73738c', '#686868'),
+    }
+
+    def __init__(self, master=None, theme=None):
+        if theme is None:
+            self.theme = self._default_theme
+        super().__init__(master, fg_color=self.theme['color_bg'])
 
         self.init_ui()
         self.reset_month()
 
     def init_ui(self):
+        self.winfo_toplevel().configure(fg_color=self.theme['color_bg'])
+        
         for i in range(8):
             self.columnconfigure(i, weight = 1)
         self.rowconfigure(0, weight = 1)
         self.rowconfigure(1, weight = 7)
-
+        
         # Create a frame for the header
         header_frame = ctk.CTkFrame(self, fg_color='transparent')
         header_frame.grid(row=0, column=0, columnspan=8, sticky='EW', pady=10)
 
-        month_label = ctk.CTkLabel(header_frame, text="", font=("Arial", 16))
+        month_label = ctk.CTkLabel(header_frame, text="", font=(self.theme['font_family'], 16), text_color=self.theme['color_text'])
         month_label.pack(side="left", padx=10)
         self.month_label = month_label
 
         # Create navigation buttons
-        next_button = ctk.CTkButton(header_frame, text=">>", width=30, command=self.next_month, fg_color='transparent')
+        next_button = ctk.CTkButton(header_frame, text=">>", width=30, command=self.next_month, text_color=self.theme['color_text'], fg_color='transparent', hover_color=self.theme['color_bg2'])
         next_button.pack(side="right", padx=4)
         
-        prev_button = ctk.CTkButton(header_frame, text="<<", width=30, command=self.prev_month, fg_color='transparent')
+        prev_button = ctk.CTkButton(header_frame, text="<<", width=30, command=self.prev_month, text_color=self.theme['color_text'], fg_color='transparent', hover_color=self.theme['color_bg2'])
         prev_button.pack(side="right", padx=4)
         
         # Create a container frame to hold the month ui data diplayed
         month_container = ctk.CTkFrame(self, fg_color='transparent')
         month_container.grid(row=1, column=0, columnspan=8, sticky='EW')
+        
         self.month_container = month_container
         # initial empty frame.
         # this is needed for month frame updating, since it destroys the old(this) frame and build a new one.
@@ -59,7 +68,7 @@ class Calendar(ctk.CTkFrame):
         # Display the week headers
         headers = ["Wee", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         for col, header in enumerate(headers):
-            header_label = ctk.CTkLabel(month_frame, text=header, font=("Arial", 12), fg_color='transparent', text_color=FOREGROUND_COLOR2)
+            header_label = ctk.CTkLabel(month_frame, text=header, font=(self.theme['font_family'], 12), text_color=self.theme['color_text_muted'])
             header_label.grid(row=1, column=col, padx=5, pady=0, sticky='we')
 
         # Display the days and week numbers
@@ -67,17 +76,17 @@ class Calendar(ctk.CTkFrame):
         for row, week in enumerate(month_days, start=2):
             month_frame.rowconfigure(row, weight = 1)
             week_number = datetime(week[0][0], week[0][1], week[0][2]).isocalendar()[1]
-            week_label = ctk.CTkLabel(month_frame, text=str(week_number), font=("Arial", 12), text_color=FOREGROUND_COLOR2)
+            week_label = ctk.CTkLabel(month_frame, text=str(week_number), font=(self.theme['font_family'], 12), text_color=self.theme['color_text_muted'])
             week_label.grid(row=row, column=0, padx=5, pady=0)
             for col, day in enumerate(week, start=1):
                 if  day[0] == today.year and day[1] == today.month and day[2] == today.day:
-                    day_label = ctk.CTkLabel(month_frame, text=str(day[2]), font=("Arial", 12), fg_color=SELECTED_BACKGROUND_COLOR, text_color=BACKGROUND_COLOR, corner_radius=10)
+                    day_label = ctk.CTkLabel(month_frame, text=str(day[2]), font=(self.theme['font_family'], 12), fg_color=self.theme['color_accent'], text_color=self.theme['color_bg'], corner_radius=10)
                 else:
                     if day[1] == month:
-                        text_color = 'white'
+                        text_color = self.theme['color_text']
                     else:
-                        text_color = FOREGROUND_COLOR2
-                    day_label = ctk.CTkLabel(month_frame, text=str(day[2]), font=("Arial", 12), text_color=text_color)
+                        text_color = self.theme['color_text_muted']
+                    day_label = ctk.CTkLabel(month_frame, text=str(day[2]), font=(self.theme['font_family'], 12), text_color=text_color)
                 day_label.grid(row=row, column=col, padx=5, pady=0, sticky='we')
         
         return month_frame
