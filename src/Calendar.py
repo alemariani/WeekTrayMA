@@ -39,7 +39,8 @@ class Calendar(ctk.CTkFrame):
         month_container = ctk.CTkFrame(self, fg_color='transparent')
         month_container.grid(row=1, column=0, columnspan=8, sticky='EW')
         self.month_container = month_container
-        # initial empty frame
+        # initial empty frame.
+        # this is needed for month frame updating, since it destroys the old(this) frame and build a new one.
         month_frame = ctk.CTkFrame(month_container)
         
     def create_month_frame(self, parent, year, month):
