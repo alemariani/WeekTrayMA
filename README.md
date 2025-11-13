@@ -2,7 +2,7 @@
 
 WeekTrayMA is a lightweight, standalone calendar application for Windows that lives in your system tray. It's designed to give you a quick view of the current month's calendar, with a special focus on showing the week number.
 
-![Screenshot of WeekTrayMA](assets/Screenshot-2025-07-24.png)
+![Screenshot of WeekTrayMA with Dark Theme](assets/screenshot-dark-theme.png) ![Screenshot of WeekTrayMA with Light Theme](assets/screenshot-light-theme.png)
 
 
 ## Features
