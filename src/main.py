@@ -55,7 +55,7 @@ def icon_updating_thread(icon):
             icon.theme = theme
             icon.update(icon)
 
-        time.sleep(60)  # run every 60 seconds
+        time.sleep(5)
 
 def main():
     trayicon = init_trayicon()
