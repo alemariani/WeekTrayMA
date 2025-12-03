@@ -1,1 +1,1 @@
-pyinstaller src\main.py -F -w -n "WeekTrayMA"
+pyinstaller src\main.py -F -w -n "WeekTrayMA" --icon=assets\icon.ico
