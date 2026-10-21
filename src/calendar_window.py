@@ -76,11 +76,15 @@ class CalendarWindow:
             self.year, self.month = today.year, today.month
             self._redraw()
         self._place()
-        # finish layout and drawing while still hidden, so it appears in one step
-        self.root.update_idletasks()
+        # Tk paints a window only once it is mapped: map it fully transparent,
+        # let it paint and get its rounded corners, then make it opaque,
+        # so it never appears half drawn
+        self.root.attributes("-alpha", 0.0)
         self.root.deiconify()
+        self.root.update()
         winapi.apply_rounded_corners(winapi.toplevel_hwnd(self.root.winfo_id()),
                                      self.width, self.height, self._px(WINDOW_CORNER_RADIUS))
+        self.root.attributes("-alpha", 1.0)
         self.root.focus_force()
 
     def hide(self):

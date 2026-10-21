@@ -78,6 +78,9 @@ class App:
         self.root.destroy()
 
     def _poll(self):
+        # reschedule first: one failed update (e.g. a transient icon error) must not stop polling for good
+        self._poll_job = self.root.after(POLL_MS, self._poll)
+
         week = date.today().isocalendar()[1]
         taskbar_light = winapi.read_taskbar_light_theme()
         if week != self.week or taskbar_light != self.taskbar_light:
@@ -89,5 +92,3 @@ class App:
             self.apps_light = apps_light
             if self.settings.theme == "auto":
                 self.calendar.set_palette(resolve("auto", apps_light))
-
-        self._poll_job = self.root.after(POLL_MS, self._poll)
