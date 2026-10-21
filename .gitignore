@@ -2,5 +2,6 @@ build
 dist
 test
 launch.json
-*.spec__pycache__
+*.spec
+__pycache__
 .pytest_cache
