@@ -14,6 +14,7 @@ HEADER_HEIGHT = 44
 WEEKDAY_ROW_HEIGHT = 24
 WEEK_ROW_HEIGHT = 26
 BOTTOM_PADDING = 8
+SCREEN_MARGIN = 5
 WINDOW_CORNER_RADIUS = 8
 TODAY_CORNER_RADIUS = 10
 NAV_BUTTON_WIDTH = 30
@@ -22,9 +23,6 @@ NAV_BUTTON_GAP = 8
 NAV_CORNER_RADIUS = 6
 TITLE_FONT_SIZE = 16
 BODY_FONT_SIZE = 12
-
-# physical pixels, not scaled, as in the original app
-SCREEN_MARGIN = 2
 
 TICK_MS = 10
 COLUMN_HEADERS = ("Wk", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -107,8 +105,9 @@ class CalendarWindow:
 
     def _place(self):
         _, _, right, bottom = winapi.primary_work_area()
-        x = right - self.width - SCREEN_MARGIN
-        y = bottom - self.height - SCREEN_MARGIN
+        margin = self._px(SCREEN_MARGIN)
+        x = right - self.width - margin
+        y = bottom - self.height - margin
         self.root.geometry(f"{self.width}x{self.height}+{x}+{y}")
 
     def _redraw(self):

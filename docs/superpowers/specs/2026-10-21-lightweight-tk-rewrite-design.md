@@ -152,9 +152,9 @@ the fixed 300×200 window).
   tray hides the window first; the click then arrives. Record the hide time;
   a tray click within ~300 ms after a focus-out hide is ignored.
 - **Position:** bottom-right of the primary monitor work area
-  (`SystemParametersInfoW(SPI_GETWORKAREA)`), with a 2 px (physical, not
-  scaled) margin from the right and bottom edges, as in the original app
-  (owner request). Recomputed on every open.
+  (`SystemParametersInfoW(SPI_GETWORKAREA)`), with a 5 px (logical, scaled)
+  margin from the right and bottom edges (owner request). Recomputed on
+  every open.
 
 ### Slide animation
 

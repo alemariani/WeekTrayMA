@@ -73,16 +73,17 @@ def test_show_keeps_window_transparent_until_painted(monkeypatch):
 
 
 @needs_display
-def test_window_sits_two_pixels_from_work_area_corner(monkeypatch):
+def test_window_sits_five_logical_pixels_from_work_area_corner(monkeypatch):
     monkeypatch.setattr(winapi, "primary_work_area", lambda: (0, 0, 1024, 768))
     monkeypatch.setattr(winapi, "toplevel_hwnd", lambda widget_id: widget_id)
     monkeypatch.setattr(winapi, "apply_rounded_corners", lambda *args: None)
 
     root = tk.Tk()
     try:
-        window = CalendarWindow(root, DARK, 1.5)
+        window = CalendarWindow(root, DARK, 2.0)
         window.show()
-        expected = f"{window.width}x{window.height}+{1024 - window.width - 2}+{768 - window.height - 2}"
+        margin = 10  # 5 logical px at 200 % scaling
+        expected = f"{window.width}x{window.height}+{1024 - window.width - margin}+{768 - window.height - margin}"
         assert root.geometry() == expected
     finally:
         root.destroy()
