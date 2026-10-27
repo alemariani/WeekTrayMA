@@ -163,10 +163,10 @@ the fixed 300×200 window).
 - On `<<`/`>>`: draw the incoming page off-screen (left or right of the
   visible area), update the header text immediately, then move both pages
   with `canvas.move(tag, dx, 0)` driven by `after(...)` ticks.
-- Same speed as the original app (owner request): linear motion of 20 px
-  (physical, not scaled) per tick, one tick every 10 ms (`after(10)`); the
-  last tick moves only the remainder. The first tick happens immediately
-  after the page is drawn.
+- Time-based: position computed from elapsed time (`time.perf_counter()`),
+  ease-out cubic, total duration 350 ms (slowed down from 180 ms at the
+  owner's request). The first tick happens immediately after the page is
+  drawn.
 - **Interruption:** a click during an animation finishes it instantly
   (outgoing page deleted, incoming page snapped to place) and starts the next
   one from that clean state. At most two pages exist at any time.

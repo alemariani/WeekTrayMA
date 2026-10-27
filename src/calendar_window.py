@@ -25,7 +25,6 @@ BODY_FONT_SIZE = 12
 
 # physical pixels, not scaled, as in the original app
 SCREEN_MARGIN = 2
-SLIDE_STEP = 20
 
 TICK_MS = 10
 COLUMN_HEADERS = ("Wk", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -57,7 +56,7 @@ class CalendarWindow:
         self.canvas = tk.Canvas(root, width=self.width, height=self.height, highlightthickness=0, bd=0)
         self.canvas.pack()
 
-        self.slide = PageSlide(lambda tag, dx: self.canvas.move(tag, dx, 0), self.canvas.delete, step=SLIDE_STEP)
+        self.slide = PageSlide(lambda tag, dx: self.canvas.move(tag, dx, 0), self.canvas.delete)
         self._ticking = False
         self._page_count = 0
 
@@ -199,13 +198,13 @@ class CalendarWindow:
         distance = self.width * delta
         outgoing = self.page
         self.page = self._draw_page(self.year, self.month, distance)
-        self.slide.start(outgoing, self.page, distance)
+        self.slide.start(outgoing, self.page, distance, time.perf_counter())
         if not self._ticking:
             self._ticking = True
             self._tick()
 
     def _tick(self):
-        if self.slide.step():
+        if self.slide.step(time.perf_counter()):
             self.root.after(TICK_MS, self._tick)
         else:
             self._ticking = False
