@@ -1,12 +1,15 @@
 from icon_image import render_week_icon
 
 
-def test_two_digit_weeks_fit_with_padding():
-    for week in (1, 8, 48, 53, 88):
-        bbox = render_week_icon(week, light_taskbar=True).getbbox()
-        assert bbox is not None
-        left, top, right, bottom = bbox
-        assert left >= 2 and top >= 2 and right <= 62 and bottom <= 62
+def ink_height(week):
+    left, top, right, bottom = render_week_icon(week, light_taskbar=True).getbbox()
+    return bottom - top
+
+
+def test_digit_size_is_the_same_for_every_week():
+    # flat-edged digits only: round ones (3, 5, 8...) overshoot by a pixel by design
+    heights = {ink_height(week) for week in (1, 4, 7, 11, 14, 17, 41, 44, 47)}
+    assert len(heights) == 1
 
 
 def opaque_pixels(image):

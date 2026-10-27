@@ -217,10 +217,11 @@ gain.)
 
 ### Tray icon
 
-- Rendered with Pillow at 64×64 RGBA, transparent background (as today),
-  font size chosen so the widest two-digit number fits within the canvas
-  with ~2 px padding (measure with `ImageDraw.textbbox`, shrink until it
-  fits). Font: `arial.ttf`, fallback `ImageFont.load_default(size=...)`.
+- Rendered with Pillow at 64×64 RGBA, transparent background, exactly as
+  the original app: `arial.ttf` at a constant 60 px, centered with
+  `anchor="mm"`, same digit size for every week (owner-tested and approved;
+  two-digit numbers may touch the edges). Fallback font:
+  `ImageFont.load_default(size=60)`.
 - Tooltip: `WeekTrayMA – Week {n}` (fixes today's "WeekTrayAM").
 - Menu:
   - `Open Calendar` (default, invisible; triggered by left click)
