@@ -147,7 +147,7 @@ the fixed 300×200 window).
   since the last draw, redraw without animation. Then compute position,
   `update_idletasks()`, `deiconify()`, `focus_force()`. Acceptance: no
   partially drawn frame is ever visible.
-- **Hide:** on `<FocusOut>`.
+- **Hide:** on `<FocusOut>` or `<Escape>`.
 - **Tray click while open closes it.** The focus-out caused by clicking the
   tray hides the window first; the click then arrives. Record the hide time;
   a tray click within ~300 ms after a focus-out hide is ignored.
@@ -231,16 +231,24 @@ gain.)
   - `Start with Windows` (check)
   - separator
   - `Quit`
-- Menu checked states read live values via pystray `checked=` callables;
-  call `icon.update_menu()` after changes.
+- Menu checked states read live values via pystray `checked=` callables.
+  pystray rebuilds the menu itself right after a menu callback returns, so
+  the theme and autostart callbacks update that state synchronously on the
+  pystray thread (attribute assignment / registry write); only saving the
+  settings file and redrawing are forwarded to the Tk thread. The app never
+  calls `update_menu()` itself.
 
 ### Settings
 
 - File: `%APPDATA%\WeekTrayMA\settings.json`, e.g. `{"theme": "auto"}`.
+  Without `APPDATA`: `<home>\AppData\Roaming\WeekTrayMA\settings.json`;
+  without a home directory either: `WeekTrayMA\settings.json` next to the
+  program.
 - Missing/corrupt file or unknown values → defaults (`theme: "auto"`),
   never a crash. Written atomically (temp file + `os.replace`).
 - **Autostart is not stored in JSON**: the registry is the source of truth.
-  `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, value `WeekTrayMA`:
+  `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` (created if missing),
+  value `WeekTrayMA`:
   - frozen exe: `"<sys.executable>"`
   - from source: `"<pythonw.exe next to sys.executable>" "<abs path of main.py>"`
 - The menu check reflects whether the value exists. If the exe moved, the

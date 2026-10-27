@@ -16,7 +16,7 @@ import tkinter as tk  # noqa: E402
 import app as app_module  # noqa: E402
 import winapi  # noqa: E402
 from calendar_window import CalendarWindow  # noqa: E402
-from settings import Settings  # noqa: E402
+from settings import Settings, default_settings_path, load_settings  # noqa: E402
 from theme import DARK  # noqa: E402
 
 needs_display = pytest.mark.skipif(not os.environ.get("DISPLAY"), reason="needs a display")
@@ -87,3 +87,56 @@ def test_window_sits_five_logical_pixels_from_work_area_corner(monkeypatch):
         assert root.geometry() == expected
     finally:
         root.destroy()
+
+
+@needs_display
+def test_escape_closes_the_calendar(monkeypatch):
+    monkeypatch.setattr(winapi, "primary_work_area", lambda: (0, 0, 1024, 768))
+    monkeypatch.setattr(winapi, "toplevel_hwnd", lambda widget_id: widget_id)
+    monkeypatch.setattr(winapi, "apply_rounded_corners", lambda *args: None)
+
+    root = tk.Tk()
+    try:
+        window = CalendarWindow(root, DARK, 1.0)
+        window.show()
+        root.event_generate("<Escape>")
+        root.update()
+        assert not window.is_visible
+    finally:
+        root.destroy()
+
+
+@needs_display
+def test_tray_menu_state_is_updated_before_the_callback_returns(monkeypatch, tmp_path):
+    # pystray rebuilds the menu right after a menu callback returns,
+    # so the checked state must already be up to date at that point
+    monkeypatch.setenv("APPDATA", str(tmp_path))
+    autostart = {"enabled": False}
+    monkeypatch.setattr(winapi, "read_apps_light_theme", lambda: True)
+    monkeypatch.setattr(winapi, "read_taskbar_light_theme", lambda: True)
+    monkeypatch.setattr(winapi, "is_autostart_enabled", lambda: autostart["enabled"])
+    monkeypatch.setattr(winapi, "set_autostart", lambda enabled: autostart.update(enabled=enabled))
+    monkeypatch.setattr(winapi, "primary_work_area", lambda: (0, 0, 1024, 768))
+
+    callbacks = {}
+
+    class FakeTray:
+        def __init__(self, **kwargs):
+            callbacks.update(kwargs)
+
+        def set_week(self, week, light_taskbar):
+            pass
+
+    monkeypatch.setattr(app_module, "Tray", FakeTray)
+    a = app_module.App()
+    try:
+        callbacks["on_set_theme"]("dark")
+        assert callbacks["get_theme"]() == "dark"
+        callbacks["on_toggle_autostart"]()
+        assert callbacks["get_autostart"]() is True
+
+        a.root.update()
+        assert a.calendar.palette is DARK
+        assert load_settings(default_settings_path()).theme == "dark"
+    finally:
+        a.root.destroy()

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from settings import Settings, load_settings, save_settings, default_settings_path
 
 
@@ -38,3 +40,12 @@ def test_default_path_uses_appdata(monkeypatch, tmp_path):
 def test_default_path_without_appdata(monkeypatch):
     monkeypatch.delenv("APPDATA", raising=False)
     assert default_settings_path().parts[-3:] == ("Roaming", "WeekTrayMA", "settings.json")
+
+
+def test_default_path_without_any_home_directory(monkeypatch):
+    def no_home():
+        raise RuntimeError("Could not determine home directory.")
+
+    monkeypatch.delenv("APPDATA", raising=False)
+    monkeypatch.setattr(Path, "home", no_home)
+    assert default_settings_path().parts[-2:] == ("WeekTrayMA", "settings.json")

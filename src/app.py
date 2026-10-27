@@ -31,8 +31,8 @@ class App:
         self.calendar = CalendarWindow(self.root, resolve(self.settings.theme, self.apps_light), scale)
         self.tray = Tray(
             on_open=self._from_tray(self._toggle_calendar),
-            on_set_theme=lambda value: self.root.after(0, self._set_theme, value),
-            on_toggle_autostart=self._from_tray(self._toggle_autostart),
+            on_set_theme=self._on_set_theme,
+            on_toggle_autostart=self._on_toggle_autostart,
             on_quit=self._from_tray(self._quit),
             get_theme=lambda: self.settings.theme,
             get_autostart=winapi.is_autostart_enabled,
@@ -56,21 +56,26 @@ class App:
         else:
             self.calendar.show()
 
-    def _set_theme(self, value):
-        self.settings.theme = value
-        try:
-            save_settings(self.settings_path, self.settings)
-        except OSError:
-            pass  # keep the choice for this session even if it can't be saved
-        self.calendar.set_palette(resolve(value, self.apps_light))
-        self.tray.refresh_menu()
+    # The two menu handlers below run on pystray's thread. pystray rebuilds the
+    # menu as soon as they return, so the state behind the check marks is
+    # updated right here; only the UI work is forwarded to the Tk thread.
 
-    def _toggle_autostart(self):
+    def _on_set_theme(self, value):
+        self.settings.theme = value
+        self.root.after(0, self._apply_theme)
+
+    def _on_toggle_autostart(self):
         try:
             winapi.set_autostart(not winapi.is_autostart_enabled())
         except OSError:
             pass
-        self.tray.refresh_menu()
+
+    def _apply_theme(self):
+        try:
+            save_settings(self.settings_path, self.settings)
+        except OSError:
+            pass  # keep the choice for this session even if it can't be saved
+        self.calendar.set_palette(resolve(self.settings.theme, self.apps_light))
 
     def _quit(self):
         self.root.after_cancel(self._poll_job)

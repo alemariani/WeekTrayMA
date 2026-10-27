@@ -64,6 +64,7 @@ class CalendarWindow:
         self._redraw()
 
         root.bind("<FocusOut>", self._on_focus_out)
+        root.bind("<Escape>", lambda e: self.hide())
         root.withdraw()
 
     @property

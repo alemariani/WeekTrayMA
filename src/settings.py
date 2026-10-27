@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from dataclasses import dataclass, asdict
 from pathlib import Path
 
@@ -13,7 +14,14 @@ class Settings:
 
 def default_settings_path():
     appdata = os.environ.get("APPDATA")
-    base = Path(appdata) if appdata else Path.home() / "AppData" / "Roaming"
+    if appdata:
+        base = Path(appdata)
+    else:
+        try:
+            base = Path.home() / "AppData" / "Roaming"
+        except RuntimeError:
+            # no home directory at all: keep settings next to the program
+            base = Path(sys.argv[0]).resolve().parent
     return base / "WeekTrayMA" / "settings.json"
 
 

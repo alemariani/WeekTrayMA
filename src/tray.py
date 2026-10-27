@@ -36,6 +36,3 @@ class Tray:
     def set_week(self, week, light_taskbar):
         self._icon.icon = render_week_icon(week, light_taskbar)
         self._icon.title = f"{APP_NAME} – Week {week}"
-
-    def refresh_menu(self):
-        self._icon.update_menu()
