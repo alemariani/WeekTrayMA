@@ -14,7 +14,6 @@ HEADER_HEIGHT = 44
 WEEKDAY_ROW_HEIGHT = 24
 WEEK_ROW_HEIGHT = 26
 BOTTOM_PADDING = 8
-SCREEN_MARGIN = 12
 WINDOW_CORNER_RADIUS = 8
 TODAY_CORNER_RADIUS = 10
 NAV_BUTTON_WIDTH = 30
@@ -23,6 +22,10 @@ NAV_BUTTON_GAP = 8
 NAV_CORNER_RADIUS = 6
 TITLE_FONT_SIZE = 16
 BODY_FONT_SIZE = 12
+
+# physical pixels, not scaled, as in the original app
+SCREEN_MARGIN = 2
+SLIDE_STEP = 20
 
 TICK_MS = 10
 COLUMN_HEADERS = ("Wk", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -54,7 +57,7 @@ class CalendarWindow:
         self.canvas = tk.Canvas(root, width=self.width, height=self.height, highlightthickness=0, bd=0)
         self.canvas.pack()
 
-        self.slide = PageSlide(lambda tag, dx: self.canvas.move(tag, dx, 0), self.canvas.delete)
+        self.slide = PageSlide(lambda tag, dx: self.canvas.move(tag, dx, 0), self.canvas.delete, step=SLIDE_STEP)
         self._ticking = False
         self._page_count = 0
 
@@ -105,9 +108,8 @@ class CalendarWindow:
 
     def _place(self):
         _, _, right, bottom = winapi.primary_work_area()
-        margin = self._px(SCREEN_MARGIN)
-        x = right - self.width - margin
-        y = bottom - self.height - margin
+        x = right - self.width - SCREEN_MARGIN
+        y = bottom - self.height - SCREEN_MARGIN
         self.root.geometry(f"{self.width}x{self.height}+{x}+{y}")
 
     def _redraw(self):
@@ -197,13 +199,13 @@ class CalendarWindow:
         distance = self.width * delta
         outgoing = self.page
         self.page = self._draw_page(self.year, self.month, distance)
-        self.slide.start(outgoing, self.page, distance, time.perf_counter())
+        self.slide.start(outgoing, self.page, distance)
         if not self._ticking:
             self._ticking = True
             self._tick()
 
     def _tick(self):
-        if self.slide.step(time.perf_counter()):
+        if self.slide.step():
             self.root.after(TICK_MS, self._tick)
         else:
             self._ticking = False
